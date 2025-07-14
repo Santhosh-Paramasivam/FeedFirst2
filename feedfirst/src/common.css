@@ -1,0 +1,26 @@
+.light-pink {
+    background-color: #fff5f9;
+}
+
+.pastel-crimson {
+    background-color: #f39cab;
+}
+
+.dark-blue {
+    background-color: #0c1765;
+}
+
+.dark-blue-text {
+    color: #0c1765;
+}
+
+.dark-blue-button {
+    height: 45px;
+    --bs-btn-bg: #0c1765;
+--bs-btn-hover-color: white;
+    --bs-btn-color: white;
+    --bs-btn-border-color: #0c1765;
+    --bs-btn-hover-border-color: #313d9d;
+
+    --bs-btn-hover-bg: #313d9d;
+}
