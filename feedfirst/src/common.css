@@ -24,3 +24,24 @@
 
     --bs-btn-hover-bg: #313d9d;
 }
+
+.light-pink-menu-button {
+    --bs-btn-color: #0c1765;
+    --bs-btn-bg: #fff5f9;
+    --bs-btn-border-color: #0c1765;
+    --bs-btn-hover-bg: #0c1765;
+    --bs-btn-hover-color: white;
+}
+
+.light-pink-menu-button.clicked {
+    --bs-btn-color: #0c1765;
+    --bs-btn-bg: white;
+    /* --bs-btn-border-color:white; */
+    --bs-btn-hover-bg: #0c1765;
+    --bs-btn-hover-color: white;
+    border-width: 0px;
+}
+
+.full-height {
+    height: calc(100vh - 56px);
+}
