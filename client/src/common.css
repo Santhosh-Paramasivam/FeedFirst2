@@ -46,6 +46,18 @@
     height: calc(100vh - 56px);
 }
 
+.double-full-height {
+    height: 2 * calc(100vh - 56px);
+}
+
 .nav-link-white {
     color: white;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.white-card {
+    --bs-card-color: white;
 }

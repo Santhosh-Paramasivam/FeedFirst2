@@ -1,8 +1,8 @@
 import '../common.css'
 import Title from '../Components/Title'
 
-function Register() {
-    return <div className="light-pink" style={{ height: 'calc(100vh - 56px)' }}>
+function RegisterUser() {
+    return <div className="light-pink pb-5">
         <Title title="User Registration" />
         <div className="card mx-4 px-4">
             <input className="form-control mt-4" placeholder="Name"></input>
@@ -21,4 +21,4 @@ function Register() {
     </div>
 }
 
-export default Register
+export default RegisterUser

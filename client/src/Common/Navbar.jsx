@@ -1,4 +1,5 @@
 import '../common.css'
+import { Link } from 'react-router-dom';
 
 function Navbar() {
     return <div>
@@ -19,9 +20,9 @@ function Navbar() {
                                 Register As
                             </a>
                             <ul class="dropdown-menu" data-bs-theme='light'>
-                                <li><a class="dropdown-item" href="#">Recipient</a></li>
+                                <li><Link to={{pathname: '/register_user'}}><a class="dropdown-item" href="#">User</a></Link></li>
                                 <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item " href="#">Pantry Manager</a></li>
+                                <li><a class="dropdown-item " href="#">Admin</a></li>
                             </ul>
                         </li>
                     </div>
