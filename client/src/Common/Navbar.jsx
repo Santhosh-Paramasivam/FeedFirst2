@@ -13,16 +13,16 @@ function Navbar() {
                 </button>
                 <div className='collapse navbar-collapse' id='nav-nav'>
                     <div className='navbar-nav'>
-                        <a className='nav-link nav-link-white' href='#'>Home</a>
+                        <Link to={{ pathname: '/' }} className='nav-link nav-link-white'>Home</Link>
                         <a className='nav-link nav-link-white' href='#'>Login</a>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle nav-link-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle nav-link-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Register As
                             </a>
-                            <ul class="dropdown-menu" data-bs-theme='light'>
-                                <li><Link to={{pathname: '/register_user'}}><a class="dropdown-item" href="#">User</a></Link></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item " href="#">Admin</a></li>
+                            <ul className="dropdown-menu" data-bs-theme='light'>
+                                <li><Link to={{ pathname: '/register_user' }} className='dropdown-item'>User</Link></li>
+                                <li><hr className="dropdown-divider" /></li>
+                                <li><a className="dropdown-item " href="#">Admin</a></li>
                             </ul>
                         </li>
                     </div>

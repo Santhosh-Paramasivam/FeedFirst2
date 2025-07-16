@@ -1,8 +1,7 @@
 import '../common.css'
-import Title from '../Components/Title'
 
 function Home() {
-    return <div className='d-flex flex-column justify-content-center align-items-center light-pink w-100 mb-4'>
+    return <div className='d-flex flex-column justify-content-center align-items-center light-pink w-100 pb-4'>
         <div className='d-flex flex-row justify-content-center align-items-center mt-5 mb-4'>
             <img src='static/food-pantry.png' style={{ width: '120px' }}></img>
             <div className='d-flex flex-column mx-3'>

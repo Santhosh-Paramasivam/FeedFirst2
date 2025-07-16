@@ -16,7 +16,6 @@ function PantryDetails() {
                 </div>
                 <div className='col-7'>
                     <Subtitle title='Address' />
-
                 </div>
             </div>
         </div>
