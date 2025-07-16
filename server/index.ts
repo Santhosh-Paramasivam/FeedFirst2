@@ -3,6 +3,7 @@ import postgres from 'postgres'
 import { Pantries, Recipients } from './drizzle/schema.ts'
 import { configDotenv } from 'dotenv'
 import { InferInsertModel } from 'drizzle-orm';
+import { createClient } from '@supabase/supabase-js'
 
 import express from 'express'
 import ErrorCodes from './error_codes.ts';
@@ -20,6 +21,8 @@ const connectionString = process.env.DATABASE_URL
 
 const client = postgres(connectionString!, { prepare: false })
 const db = drizzle(client);
+
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 
 type NewUser = InferInsertModel<typeof Recipients>;
 
@@ -44,13 +47,29 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register_user', async (req, res) => {
-    if('email_ID' in Object.keys(req.body)) {
-        const result = await db.select({'email_ID':req.body['email_ID']}).from(Recipients)
-        console.log(result)
+    if(!('email_ID' in req.body) || !('password' in req.body) || !req.body['email_ID'].trim() || !req.body['password'].trim()) {
+        res.status(400).send({'error': 'Missing email or password missing'})
+        return 
     }
 
-    try { 
-        await db.insert(Recipients).values(req.body)
+    const {data,error} = await supabase.auth.signUp({
+        email:req.body['email_ID'],
+        password:req.body['password']
+    })
+
+    if(error) {
+        console.log(error)
+        res.status(error.status).send({'error':error.code})
+        return
+    }
+    if(data) {
+        var authId = data.user?.id
+    }
+
+    try {
+        const { password, ...userData } = req.body
+        userData['recipient_ID'] = authId
+        await db.insert(Recipients).values(userData)
         res.status(200).send({'Success':'User Registered'})
     }
     catch(e) {
