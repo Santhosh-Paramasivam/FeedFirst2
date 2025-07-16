@@ -6,7 +6,9 @@ import { InferInsertModel } from 'drizzle-orm';
 import { createClient } from '@supabase/supabase-js'
 
 import express from 'express'
-import ErrorCodes from './error_codes.ts';
+import cors from 'cors'
+import ErrorCodes from './error_codes.ts'
+
 
 configDotenv()
 
@@ -14,8 +16,13 @@ const PORT = 8080
 
 const app = express()
 
+const corsOptions = {
+    origin: process.env.CLIENT_URL
+}
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true}))
+app.use(cors(corsOptions))
 
 const connectionString = process.env.DATABASE_URL
 
