@@ -22,61 +22,62 @@ CREATE TYPE "STOCK_LEVEL" AS ENUM (
 CREATE TABLE "Item" (
   "pantry_ID" INT,
   "item_ID" SERIAL PRIMARY KEY,
-  "units_used" "UNITS",
-  "current_stock" "STOCK_LEVEL",
-  "item_name" VARCHAR(30)
+  "units_used" "UNITS" NOT NULL,
+  "current_stock" "STOCK_LEVEL" NOT NULL,
+  "item_name" VARCHAR(30) NOT NULL
 );
 
 CREATE TABLE "PantryItemBatches" (
   "item_ID" INT,
   "batch_ID" SERIAL PRIMARY KEY,
-  "batch_no" INT,
-  "expiry_date" DATE,
-  "quantity" FLOAT
+  "batch_no" INT NOT NULL,
+  "expiry_date" DATE NOT NULL,
+  "quantity" FLOAT NOT NULL
 );
 
 CREATE TABLE "Pantries" (
   "pantry_ID" SERIAL PRIMARY KEY,
-  "pantry_name" VARCHAR(20),
-  "pantry_address" TEXT
+  "pantry_name" VARCHAR(20) NOT NULL,
+  "pantry_address" TEXT NOT NULL
 );
 
 CREATE TABLE "PantryManager" (
   "pantrymanager_ID" CHAR(36) PRIMARY KEY,
-  "ration_card_number" VARCHAR(20),
-  "name" VARCHAR(20),
-  "phone_number" VARCHAR(20),
-  "email_ID" VARCHAR(100),
-  "address" TEXT,
+  "ration_card_number" VARCHAR(20) NOT NULL,
+  "name" VARCHAR(20) NOT NULL,
+  "phone_number" VARCHAR(20) NOT NULL,
+  "email_ID" VARCHAR(100) NOT NULL,
+  "address" TEXT NOT NULL,
   "pantry_ID" INT
 );
 
 CREATE TABLE "Recipients" (
   "recipient_ID" CHAR(36) PRIMARY KEY,
-  "phone_number" CHAR(20),
-  "name" VARCHAR(20),
-  "ration_card_number" VARCHAR(20),
-  "email_ID" VARCHAR(100),
-  "dietary_needs" TEXT,
-  "household_size" INT,
+  "phone_number" CHAR(20) NOT NULL,
+  "name" VARCHAR(20) NOT NULL,
+  "ration_card_number" VARCHAR(20) NOT NULL,
+  "email_ID" VARCHAR(100) NOT NULL,
+  "dietary_needs" TEXT NOT NULL,
+  "household_size" INT NOT NULL,
   "pantry_ID" INT,
-  "address" TEXT,
+  "address" TEXT NOT NULL,
   "priority" INT CHECK("priority" BETWEEN 1 AND 5)
+  -- priority = NULL means the recipient is unverified
 );
 
 CREATE TABLE "FoodVouchers" (
   "pantry_ID" INT,
   "recipient_ID" CHAR(36),
   "voucher_ID" SERIAL PRIMARY KEY,
-  "status" "STATUS"
+  "status" "STATUS" NOT NULL
 );
 
 CREATE TABLE "RequestedItem" (
   "requested_item_ID" SERIAL PRIMARY KEY,
   "item_ID" INT,
   "voucher_ID" INT,
-  "requested_quantity" FLOAT,
-  "provided_quantity" FLOAT
+  "requested_quantity" FLOAT NOT NULL,
+  "provided_quantity" FLOAT NOT NULL
 );
 
 ALTER TABLE "Item" ADD FOREIGN KEY ("pantry_ID") REFERENCES "Pantries" ("pantry_ID") ON DELETE SET NULL;
