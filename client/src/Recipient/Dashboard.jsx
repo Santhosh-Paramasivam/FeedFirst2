@@ -1,6 +1,7 @@
 import '../common.css'
 import { useState } from 'react'
 import GetVoucher from './GetVoucher'
+import VoucherList from './VoucherList'
 
 function Dashboard() {
     const [page, setPage] = useState('get-voucher')
@@ -21,6 +22,7 @@ function Dashboard() {
                 <button className='btn rounded-0 py-2 light-pink-menu-button'>Log Out</button>
             </div>
             { page === 'get-voucher' && <GetVoucher/>}
+            { page === 'voucher-list' && <VoucherList/>}
         </div>
     </div>
 }

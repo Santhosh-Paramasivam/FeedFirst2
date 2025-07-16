@@ -1,5 +1,5 @@
 import Login from './Common/Login'
-import Navbar from './Common/Header'
+import Navbar from './Common/Navbar'
 import Register from './Recipient/Register'
 import PantryDetails from './Common/PantryDetails'
 import Dashboard from './Recipient/Dashboard'
