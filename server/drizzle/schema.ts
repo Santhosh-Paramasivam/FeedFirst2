@@ -43,6 +43,8 @@ export const Pantries = pgTable("Pantries", {
   pantry_ID: serial("pantry_ID").primaryKey(),
   pantry_name: varchar("pantry_name", { length: 20 }).notNull(),
   pantry_address: text("pantry_address").notNull(),
+  hashed_pantry_key: char("hashed_pantry_key", {length: 20}).notNull(),
+  contact_number: varchar("contact_number", {length: 64}).notNull()
 });
 
 export const Item = pgTable("Item", {
