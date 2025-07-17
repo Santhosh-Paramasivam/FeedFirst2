@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import { Pantries, PantryManager, Recipients } from './drizzle/schema.ts'
 import { configDotenv } from 'dotenv'
-import { InferInsertModel } from 'drizzle-orm';
+import { eq, InferInsertModel } from 'drizzle-orm';
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
 
@@ -57,6 +57,8 @@ function checkPresent(obj, arr, res) {
             return false
         }
     }
+
+    return true
 }
 
 async function hash(string) {
@@ -111,10 +113,20 @@ app.post('/register_user', async (req, res) => {
 })
 
 app.post('/register_admin', async (req, res) => {
-    if(!('email_ID' in req.body) || !('password' in req.body) || !req.body['email_ID'].trim() || !req.body['password'].trim()) {
-        res.status(400).send({'error': 'Missing email or password missing'})
+    const requiredFields = ['email_ID', 'password', 'pantry_key']
+
+    if(!checkPresent(req.body, requiredFields, res)) {
+        console.log('returning')
         return 
     }
+
+    const results = await db.select({
+        pantry_ID: Pantries.pantry_ID,
+        hashed_pantry_key : Pantries.hashed_pantry_key,
+    }).from(Pantries).where(eq(Pantries.hashed_pantry_key, await hash(req.body['pantry_key'])))
+    console.log(results)
+
+    const pantry_ID = results[0].pantry_ID
 
     const {data,error} = await supabase.auth.signUp({
         email:req.body['email_ID'],
@@ -133,6 +145,7 @@ app.post('/register_admin', async (req, res) => {
     try {
         const { password, ...userData } = req.body
         userData['pantrymanager_ID'] = authId
+        userData['pantry_ID'] = pantry_ID
         await db.insert(PantryManager).values(userData)
         res.status(200).send({'Success':'User Registered'})
     }
