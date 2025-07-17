@@ -38,7 +38,9 @@ CREATE TABLE "PantryItemBatches" (
 CREATE TABLE "Pantries" (
   "pantry_ID" SERIAL PRIMARY KEY,
   "pantry_name" VARCHAR(20) NOT NULL,
-  "pantry_address" TEXT NOT NULL
+  "pantry_address" TEXT NOT NULL,
+  "contact_number" VARCHAR(20) NOT NULL,
+  "hashed_pantry_key" CHAR(64) NOT NULL
 );
 
 CREATE TABLE "PantryManager" (
