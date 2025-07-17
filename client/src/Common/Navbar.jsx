@@ -15,6 +15,7 @@ function Navbar() {
                     <div className='navbar-nav'>
                         <Link to={{ pathname: '/' }} className='nav-link nav-link-white'>Home</Link>
                         <a className='nav-link nav-link-white' href='#'>Login</a>
+                        <Link to={{pathname: '/pantries'}} className='nav-link nav-link-white'>Pantries</Link>
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle nav-link-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Register As
@@ -22,7 +23,7 @@ function Navbar() {
                             <ul className="dropdown-menu" data-bs-theme='light'>
                                 <li><Link to={{ pathname: '/register_user' }} className='dropdown-item'>User</Link></li>
                                 <li><hr className="dropdown-divider" /></li>
-                                <li><a className="dropdown-item " href="#">Admin</a></li>
+                                <li><Link to={{pathname: '/register_pantry'}} className='dropdown-item'>Pantry Admin</Link></li>
                             </ul>
                         </li>
                     </div>

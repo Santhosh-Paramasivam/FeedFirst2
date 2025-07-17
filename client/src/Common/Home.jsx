@@ -1,4 +1,6 @@
 import '../common.css'
+import { Link } from 'react-router-dom'
+
 
 function Home() {
     return <div className='d-flex flex-column justify-content-center align-items-center light-pink w-100 pb-4'>
@@ -23,18 +25,20 @@ function Home() {
 
                         The lack of streamlined communication between those concerned often results in,
 
-                        <ol>
-                            <li>
-                                Food waste
-                            </li>
-                            <li>
-                                Stock shortages
-                            </li>
-                            <li>
-                                And missed opportunities for people to get the help they need.
-                            </li>
-                        </ol>
+                    </p>
+                    <ol>
+                        <li>
+                            Food waste
+                        </li>
+                        <li>
+                            Stock shortages
+                        </li>
+                        <li>
+                            And missed opportunities for people to get the help they need.
+                        </li>
+                    </ol>
 
+                    <p>
                         FeedFirst addresses these challenges by creating a centralized system that simplifies the process for both recipients and pantry managers, ensuring that no one in need is left behind.
                     </p>
                 </div>
@@ -44,22 +48,21 @@ function Home() {
             <div className='card px-3 pt-3 mt-4 m-2' style={{ width: '500px' }}>
                 <h3 className='card-title'>The Solution</h3>
                 <div className='card-body'>
-                    <p>Recepients to
-                        <ul>
-                            <li>Check for local food pantries</li>
-                            <li>Check stock levels for various items</li>
-                            <li>Apply for food vouchers</li>
-                            <li>Redeem food vouchers for food at the respective pantries</li>
-                        </ul>
-                        Pantry managers to
-                        <ul>
-                            <li>View and manage pantry inventory</li>
-                            <li>Maintain expiry dates and stock level</li>
-                            <li>Register other food pantry voluteers</li>
-                            <li>Verify and assign recepients a priority level</li>
-                            <li>Store and process food vouchers requests</li>
-                        </ul>
-                    </p>
+                    <p>Recepients to</p>
+                    <ul>
+                        <li>Check for local food pantries</li>
+                        <li>Check stock levels for various items</li>
+                        <li>Apply for food vouchers</li>
+                        <li>Redeem food vouchers for food at the respective pantries</li>
+                    </ul>
+                    Pantry managers to
+                    <ul>
+                        <li>View and manage pantry inventory</li>
+                        <li>Maintain expiry dates and stock level</li>
+                        <li>Register other food pantry voluteers</li>
+                        <li>Verify and assign recepients a priority level</li>
+                        <li>Store and process food vouchers requests</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -69,14 +72,18 @@ function Home() {
                 <h4 className='card-title'>Register as User</h4>
                 <div className='card-body'>
                     <p>To request food from nearby food banks and pantries</p>
-                    <button className='btn dark-blue-button'>Register</button>
+                    <Link to={{ pathname: '/register_user' }}>
+                        <button className='btn dark-blue-button'>Register</button>
+                    </Link>
                 </div>
             </div>
             <div className='card px-3 pt-3 m-2' style={{ width: '500px' }}>
                 <h4 className='card-title'>Register as Admin</h4>
                 <div className='card-body'>
                     <p>To register your pantry and provide food to others</p>
-                    <button className='btn dark-blue-button'>Register</button>
+                    <Link to={{ pathname: '/register_pantry' }}>
+                        <button className='btn dark-blue-button'>Register</button>
+                    </Link>
                 </div>
             </div>
         </div>
