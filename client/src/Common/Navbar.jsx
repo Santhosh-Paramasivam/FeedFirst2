@@ -14,7 +14,7 @@ function Navbar() {
                 <div className='collapse navbar-collapse' id='nav-nav'>
                     <div className='navbar-nav'>
                         <Link to={{ pathname: '/' }} className='nav-link nav-link-white'>Home</Link>
-                        <a className='nav-link nav-link-white' href='#'>Login</a>
+                        <Link to={{ pathname: '/login' }} className='nav-link nav-link-white'>Login</Link>
                         <Link to={{pathname: '/pantries'}} className='nav-link nav-link-white'>Pantries</Link>
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle nav-link-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
