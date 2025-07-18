@@ -4,6 +4,9 @@ import axios from 'axios'
 import { useState } from 'react'
 
 function RegisterUser() {
+    // After registration, indicate whether it is successful or not and redirect to login page
+
+
     const [name, setName] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [address, setAddress] = useState('')

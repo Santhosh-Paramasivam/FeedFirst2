@@ -3,7 +3,7 @@ import { useState } from 'react'
 import GetVoucher from './GetVoucher'
 import VoucherList from './VoucherList'
 
-function Dashboard() {
+function UserDashboard() {
     const [page, setPage] = useState('get-voucher')
 
     function pageClicked(curr) {
@@ -27,4 +27,4 @@ function Dashboard() {
     </div>
 }
 
-export default Dashboard
+export default UserDashboard
