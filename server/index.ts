@@ -197,8 +197,57 @@ app.post('/pantries', async (req, res) => {
         console.log(e)
         res.status(500).send('Internal Server Error')
     }
+})
 
+app.post('/login', async (req, res) => {
+    const requiredFields = ['email_ID', 'password','role']
 
+    if(!checkPresent(req.body, requiredFields, res)) {
+        return 
+    }
+
+    const {data, error} = await supabase.auth.signInWithPassword({
+        email: req.body['email_ID'],
+        password: req.body['password']
+    })
+
+    console.log(data)
+    
+    if(error || !data) {
+        console.log(error)
+        res.status(400).send({'error':'Invalid login credentials'})
+        return
+    }
+
+        let result
+        try {
+            if(req.body.role === 'admin') {
+                result = await db.select().from(PantryManager).where(eq(PantryManager.pantrymanager_ID, data.user.id))
+            }
+            else if(req.body.role === 'user') {
+                result = await db.select().from(Recipients).where(eq(Recipients.recipient_ID, data.user.id))
+            }
+            console.log(result)
+        }
+        catch(e) {
+            if(Object.keys(ErrorCodes).indexOf(e.cause.code) > -1) {
+                res.status(400).send({'error': ErrorCodes[e.cause.code]})
+                return
+            }
+
+            console.log(e)
+            res.status(500).send('Internal Server Error')
+        }
+
+        if(result.length <= 0) {
+            res.status(400).send({'error':'Invalid login credentials'})
+            return
+        }
+
+    if(data) {
+        res.status(200).send({'Success':'User logged in', 'access_token':data.session.access_token, 'role':req.body.role})
+        console.log(data)
+    }
 })
 
 app.listen(PORT, () => {
