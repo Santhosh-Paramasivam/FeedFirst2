@@ -25,6 +25,7 @@ CREATE TABLE "Item" (
   "units_used" "UNITS" NOT NULL,
   "current_stock" "STOCK_LEVEL" NOT NULL,
   "item_name" VARCHAR(30) NOT NULL
+  -- Item name for each pantry should be unique ideally
 );
 
 CREATE TABLE "PantryItemBatches" (

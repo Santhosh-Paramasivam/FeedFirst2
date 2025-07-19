@@ -1,14 +1,15 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
-import { Pantries, PantryManager, Recipients } from './drizzle/schema.ts'
+import { Item, Pantries, PantryManager, Recipients } from './drizzle/schema.ts'
 import { configDotenv } from 'dotenv'
-import { eq, InferInsertModel } from 'drizzle-orm';
+import { eq, InferInsertModel,and } from 'drizzle-orm';
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
 
 import express from 'express'
 import cors from 'cors'
 import ErrorCodes from './error_codes.ts'
+import { Recoverable } from 'repl';
 
 
 configDotenv()
@@ -248,6 +249,145 @@ app.post('/login', async (req, res) => {
         res.status(200).send({'Success':'User logged in', 'access_token':data.session.access_token, 'role':req.body.role})
         console.log(data)
     }
+})
+
+async function validateAccessToken(access_token : string, role : string, res){
+    access_token = access_token.slice(7)
+
+    var {data,error} = await supabase.auth.getUser(access_token)
+
+    if(error || !data) {
+        console.log(error)
+        res.status(400).send({'error':'Invalid login credentials'})
+        return false
+    }
+
+    // The above state may lead to an automatic log out
+    let authId = data.user!.id!
+
+    let result 
+    try {
+        if(role === 'admin') {
+            result = await db.select().from(PantryManager).where(eq(PantryManager.pantrymanager_ID, authId))
+        }
+        else if(role === 'user') {
+            result = await db.select().from(Recipients).where(eq(Recipients.recipient_ID, authId))
+        }
+   }
+    catch(e) {
+            if(Object.keys(ErrorCodes).indexOf(e.cause.code) > -1) {
+                res.status(400).send({'error': ErrorCodes[e.cause.code]})
+                return false
+            }
+
+            console.log(e)
+            res.status(500).send('Internal Server Error')
+            return false
+        }
+
+    if(result.length <= 0) {
+        res.status(400).send({'error':'Invalid login credentials'})
+        return false
+    }
+
+    return result
+}
+
+app.post('/items', async (req, res) => {
+    const requiredFields = ['item_name', 'item_unit','access_token']
+
+    if(!checkPresent(req.body, requiredFields, res)) {
+        return 
+    }
+
+    let result = await validateAccessToken(req.body.access_token, 'admin', res)
+
+    if(!result) return
+
+    let pantry_ID = result[0].pantry_ID
+
+    try {
+        result = await db.insert(Item).values({
+            "current_stock": "MEDIUM",
+            "item_name":req.body.item_name,
+            "units_used":req.body.item_unit,
+            "pantry_ID":pantry_ID
+        })
+    }
+    catch(e) {
+            if(Object.keys(ErrorCodes).indexOf(e.cause.code) > -1) {
+                res.status(400).send({'error': ErrorCodes[e.cause.code]})
+                return
+            }
+
+            console.log(e)
+            res.status(500).send('Internal Server Error')
+    }
+
+    res.status(200).send({'Success':'Item created'})
+})
+
+app.get('/items', async (req, res) => {
+    const requiredFields = ['authorization']
+
+    console.log(req.headers)
+    if(!checkPresent(req.headers, requiredFields, res)) {
+        return 
+    }
+
+    let authId = await validateAccessToken(req.headers.authorization, 'admin', res)
+
+    if(!authId) return
+
+    let pantry_ID = authId[0].pantry_ID
+
+    let result
+    try {
+        result = await db.select().from(Item).where(eq(Item.pantry_ID, pantry_ID))
+    } 
+    catch(e) {
+        if(Object.keys(ErrorCodes).indexOf(e.cause.code) > -1) {
+            res.status(400).send({'error': ErrorCodes[e.cause.code]})
+            return
+        }
+
+        console.log(e)
+        res.status(500).send('Internal Server Error')
+    }
+
+    console.log(result)
+    res.status(201).send(result)
+})
+
+app.delete('/items/:item_ID', async (req, res) => {
+    const requiredHeaders = ['authorization']
+
+    console.log(req.headers)
+    if(!checkPresent(req.headers, requiredHeaders, res)) {
+        return 
+    }
+
+    let authId = await validateAccessToken(req.headers.authorization, 'admin', res)
+
+    if(!authId) return
+
+    let pantry_ID = authId[0].pantry_ID
+
+    let result
+    try {
+        result = await db.delete(Item).where(and(eq(Item.item_ID, req.params.item_ID), eq(Item.pantry_ID, pantry_ID)))
+    }
+    catch(e) {
+        if(Object.keys(ErrorCodes).indexOf(e.cause.code) > -1) {
+            res.status(400).send({'error': ErrorCodes[e.cause.code]})
+            return
+        }
+
+        console.log(e)
+        res.status(500).send('Internal Server Error')
+    }
+
+    res.status(201).send({'Success':'Item deleted'})
 })
 
 app.listen(PORT, () => {
