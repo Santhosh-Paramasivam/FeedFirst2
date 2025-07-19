@@ -39,6 +39,16 @@ function UpdateItems() {
         getItems()
     }, [localStorage.getItem('access_token')])
 
+    function deleteItem(item_ID) {
+        axios.delete(`${import.meta.env.VITE_SERVER_URL}items/${item_ID}`, {
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+            }
+        })
+
+        setCurrentItems(currentItems.filter((item) => item.item_ID !== item_ID))
+    }
+
     function addItem() {
         if (!itemName.trim()) {
             alert('item name must not be empty')
@@ -53,13 +63,14 @@ function UpdateItems() {
         axios.post(`${import.meta.env.VITE_SERVER_URL}items`, {
             "item_name": itemName,
             "item_unit": itemUnit,
-            "access_token": localStorage.getItem('access_token')
+            "access_token": `Bearer ${localStorage.getItem('access_token')}`
         }, {
             headers: { "Content-Type": "application/json" }
         })
             .catch(e => console.log(e))
             .then(e => {
                 console.log(e)
+                getItems()
                 alert('Item successfully added')
             })
     }
@@ -81,7 +92,11 @@ function UpdateItems() {
         <Subtitle title='View Items' />
         <ul className='list-group'>
             {currentItems && currentItems.map((item) => {
-                return <li key={item.item_ID} className='list-group-item'>{item.item_name}</li>
+                return <li key={item.item_ID} className='list-group-item d-flex flex-row'>
+                    <p className=''>{item.item_name}</p>
+                    <div className='flex-grow-1'></div>
+                <button className='btn btn-danger btn-sm' onClick={() => deleteItem(item.item_ID)}>Delete</button>
+                </li>
             })}
         </ul>
     </div>
