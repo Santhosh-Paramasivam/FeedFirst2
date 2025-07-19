@@ -23,6 +23,12 @@ export const statusEnum = pgEnum("STATUS", [
   "REJECTED",
 ]);
 
+export const userStatusEnum = pgEnum("USER_STATUS", [
+  "UNVERIFIED",
+  "VERIFIED",
+  "REJECTED"
+])
+
 export const unitsEnum = pgEnum("UNITS", [
   "c/cans",
   "g/grams",
@@ -94,6 +100,7 @@ export const Recipients = pgTable(
     }),
     address: text("address").notNull(),
     priority: integer("priority").notNull(),
+    status: userStatusEnum("status").notNull()
   },
   (table) => ({
     priorityCheck: sql`CHECK (${table.priority} BETWEEN 1 AND 5)`,

@@ -5,6 +5,12 @@ CREATE TYPE "STATUS" AS ENUM (
   'REJECTED'
 );
 
+CREATE TYPE "USER_STATUS" AS ENUM (
+  'UNVERIFIED',
+  'VERIFIED',
+  'REJECTED'
+);
+
 CREATE TYPE "UNITS" AS ENUM (
   'c/cans',
   'g/grams',
@@ -64,6 +70,7 @@ CREATE TABLE "Recipients" (
   "household_size" INT NOT NULL,
   "pantry_ID" INT,
   "address" TEXT NOT NULL,
+  "status" "USER_STATUS" NOT NULL,
   "priority" INT CHECK("priority" BETWEEN 1 AND 5)
   -- priority = NULL means the recipient is unverified
 );

@@ -2,6 +2,7 @@ import '../common.css'
 import { useState } from 'react'
 import ViewInventory from './DashboardPages/ViewInventory'
 import UpdateItems from './DashboardPages/UpdateItems'
+import VerifyUsers from './DashboardPages/VerifyUsers'
 
 function AdminDashboard() {
     const [page, setPage] = useState('view-inventory')
@@ -25,6 +26,7 @@ function AdminDashboard() {
             </div>
             {page === 'view-inventory' && <ViewInventory/>}
             {page === 'update-items' && <UpdateItems/>}
+            {page === 'verify-users' && <VerifyUsers/>}
         </div>
     </div>
 }

@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
-import { Item, Pantries, PantryManager, Recipients } from './drizzle/schema.ts'
+import { Item, Pantries, PantryManager, Recipients, userStatusEnum } from './drizzle/schema.ts'
 import { configDotenv } from 'dotenv'
 import { eq, InferInsertModel,and } from 'drizzle-orm';
 import { createClient } from '@supabase/supabase-js'
@@ -10,6 +10,7 @@ import express from 'express'
 import cors from 'cors'
 import ErrorCodes from './error_codes.ts'
 import { Recoverable } from 'repl';
+import { receiveMessageOnPort } from 'worker_threads';
 
 
 configDotenv()
@@ -99,6 +100,7 @@ app.post('/register_user', async (req, res) => {
     try {
         const { password, ...userData } = req.body
         userData['recipient_ID'] = authId
+        userData['status'] = 'UNVERIFIED'
         await db.insert(Recipients).values(userData)
         res.status(200).send({'Success':'User Registered'})
     }
@@ -356,7 +358,7 @@ app.get('/items', async (req, res) => {
     }
 
     console.log(result)
-    res.status(201).send(result)
+    res.status(200).send(result)
 })
 
 app.delete('/items/:item_ID', async (req, res) => {
@@ -388,6 +390,77 @@ app.delete('/items/:item_ID', async (req, res) => {
     }
 
     res.status(201).send({'Success':'Item deleted'})
+})
+
+app.get('/users', async (req, res) => {
+    const requiredHeaders = ['authorization']
+
+    console.log(req.headers)
+    if(!checkPresent(req.headers, requiredHeaders, res)) {
+        return 
+    }
+
+    let authId = await validateAccessToken(req.headers.authorization, 'admin', res)
+
+    if(!authId) return
+
+    let pantry_ID = authId[0].pantry_ID
+
+    let result
+    try {
+        result = await db.select().from(Recipients).where(and(eq(Recipients.pantry_ID, pantry_ID), eq(Recipients.status, userStatusEnum.enumValues[0])))
+    } 
+    catch(e) {
+        if(Object.keys(ErrorCodes).indexOf(e.cause.code) > -1) {
+            res.status(400).send({'error': ErrorCodes[e.cause.code]})
+            return
+        }
+
+        console.log(e)
+        res.status(500).send('Internal Server Error')
+    }
+
+    console.log(result)
+    res.status(200).send(result)
+})
+
+app.put('/user_status', async (req, res) => {
+    const requiredHeaders = ['authorization']
+    const requiredFields = ['recipient_ID', 'status','priority']
+
+    console.log(req.headers)
+    if(!checkPresent(req.headers, requiredHeaders, res)) {
+        return 
+    }
+
+    if(!checkPresent(req.body, requiredFields, res)) {
+        return 
+    }
+
+    let authId = await validateAccessToken(req.headers.authorization, 'admin', res)
+
+    if(!authId) return
+
+    let pantry_ID = authId[0].pantry_ID
+
+    let result
+    try {
+        result = await db.update(Recipients).set({
+            status: req.body.status,
+            priority: req.body.priority
+        }).where(eq(Recipients.recipient_ID, req.body.recipient_ID))
+    }
+    catch(e) {
+        if(Object.keys(ErrorCodes).indexOf(e.cause.code) > -1) {
+            res.status(400).send({'error': ErrorCodes[e.cause.code]})
+            return
+        }
+
+        console.log(e)
+        res.status(500).send('Internal Server Error')
+    }
+
+    res.status(201).send({'Success':'User status updated'})
 })
 
 app.listen(PORT, () => {
