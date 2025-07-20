@@ -89,7 +89,7 @@ function VerifyUsers() {
         </div>
 
         <div className="flex-grow-1"></div>
-        <Subtitle className='' title={`Users to verify : ${currentIndex + 1} / ${users.length === currentIndex ? '0' : users.length}`} />
+        <Subtitle className='' title={`Users to verify : ${users.length === currentIndex ? '0' : currentIndex + 1} / ${users.length === currentIndex ? '0' : users.length}`} />
     </div>
 }
 
