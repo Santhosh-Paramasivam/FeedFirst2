@@ -54,7 +54,7 @@ function checkType(obj, typeObj, res) {
 
 function checkPresent(obj, arr, res) {
     for(let val of arr) {
-        if(!(val in obj) || !obj[val].trim()) {
+        if(!(val in obj)) {
             res.status(400).send({'Bad Request':`Missing field ${val}`})
             return false
         }
@@ -461,6 +461,44 @@ app.put('/user_status', async (req, res) => {
     }
 
     res.status(201).send({'Success':'User status updated'})
+})
+
+app.put('/item_stock', async (req, res) => {
+    const requiredHeaders = ['authorization']
+    const requiredFields = ['item_ID', 'current_stock']
+
+    console.log(req.headers)
+    if(!checkPresent(req.headers, requiredHeaders, res)) {
+        return 
+    }
+
+    if(!checkPresent(req.body, requiredFields, res)) {
+        return 
+    }
+
+    let authId = await validateAccessToken(req.headers.authorization, 'admin', res)
+
+    if(!authId) return
+
+    let pantry_ID = authId[0].pantry_ID
+
+    let result
+    try {
+        result = await db.update(Item).set({
+            current_stock: req.body.current_stock
+        }).where(eq(Item.item_ID, req.body.item_ID))
+    }
+    catch(e) {
+        if(Object.keys(ErrorCodes).indexOf(e.cause.code) > -1) {
+            res.status(400).send({'error': ErrorCodes[e.cause.code]})
+            return
+        }
+
+        console.log(e)
+        res.status(500).send('Internal Server Error')
+    }
+
+    res.status(201).send({'Success':'Item stock updated'})
 })
 
 app.listen(PORT, () => {

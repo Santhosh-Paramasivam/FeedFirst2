@@ -3,6 +3,7 @@ import '../../common.css'
 import Subtitle from '../../Components/Subtitle'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import ItemUpdateRow from '../../Components/ItemUpdateRow'
 
 function UpdateItems() {
     let navigate = useNavigate()
@@ -89,15 +90,10 @@ function UpdateItems() {
         </select>
         <button className='mt-3 btn dark-blue-button mb-3' onClick={addItem}>Add Item</button>
 
-        <Subtitle title='View Items' />
+        <Subtitle title='View, Update Current Stock Level and Delete Items' className='mb-3'/>
         <ul className='list-group'>
             {currentItems && currentItems.map((item) => {
-                return <li key={item.item_ID} className='list-group-item d-flex flex-row'>
-                    <p className=''>{item.item_name}</p>
-                    <div className='flex-grow-1'></div>
-                <button className='btn btn-danger btn-sm' onClick={() => deleteItem(item.item_ID)}>Delete</button>
-                </li>
-            })}
+                return <ItemUpdateRow item={item}/>})}
         </ul>
     </div>
 }
