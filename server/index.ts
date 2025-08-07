@@ -8,15 +8,18 @@ import crypto from 'crypto'
 
 import express from 'express'
 import cors from 'cors'
+
+// Custom utils
 import ErrorCodes from './error_codes.ts'
+import checkPresent from './utils/checkPresent.tsx';
+import hash from './utils/hash.tsx';
+import { runInNewContext } from 'vm';
 
 configDotenv()
 
 const PORT = 8080
 
 const app = express()
-
-console.log(process.env.SUPABASE_URL)
 
 const corsOptions = {
     origin: [process.env.CLIENT_URL_A, process.env.CLIENT_URL_B]
@@ -31,49 +34,7 @@ const connectionString = process.env.DATABASE_URL
 const client = postgres(connectionString!, { prepare: false })
 const db = drizzle(client);
 
-console.log(process.env.SUPABASE_URL)
-console.log(process.env.SUPABASE_KEY)
-
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
-
-type NewUser = InferInsertModel<typeof Recipients>;
-
-function checkType(obj, typeObj, res) {
-    typeObj = Object.keys(typeObj)
-    typeObj.pop()
-
-    let a = Array()
-
-    for(let val of typeObj) {
-        if(!(val in obj)) {
-            res.status(400).send({'Bad Request':`Missing field ${val}`})
-            return false
-        }
-    }
-
-    return true
-}
-
-function checkPresent(obj, arr, res) {
-    for(let val of arr) {
-        if(!(val in obj)) {
-            res.status(400).send({'Bad Request':`Missing field ${val}`})
-            return false
-        }
-    }
-
-    return true
-}
-
-async function hash(string) {
-  const utf8 = new TextEncoder().encode(string);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray
-    .map((bytes) => bytes.toString(16).padStart(2, '0'))
-    .join('');
-  return hashHex;
-}
 
 app.get('/', (req, res) => {
     res.send('Hello')
@@ -501,6 +462,20 @@ app.put('/item_stock', async (req, res) => {
     }
 
     res.status(201).send({'Success':'Item stock updated'})
+})
+
+app.post('/admin_logout', async (req, res) => {
+    const requiredFields = ['access_token']
+
+    if(!checkPresent(req.body, requiredFields, res)) {
+        return 
+    }
+
+    const { error } = await supabase.auth.admin.signOut(req.body.access_token);
+
+    if(error) {
+        console.log(error)
+    }
 })
 
 app.listen(PORT, () => {
