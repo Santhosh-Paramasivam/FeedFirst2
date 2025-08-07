@@ -11,9 +11,8 @@ import cors from 'cors'
 
 // Custom utils
 import ErrorCodes from './error_codes.ts'
-import checkPresent from './utils/checkPresent.tsx';
-import hash from './utils/hash.tsx';
-import { runInNewContext } from 'vm';
+import {checkPresent} from './utils/checkPresent.tsx';
+import {hash} from './utils/hash.tsx';
 
 configDotenv()
 
@@ -464,19 +463,20 @@ app.put('/item_stock', async (req, res) => {
     res.status(201).send({'Success':'Item stock updated'})
 })
 
-app.post('/admin_logout', async (req, res) => {
-    const requiredFields = ['access_token']
+app.post('/log_out', async (req, res) => {
+    let authHeader = req.headers.authorization
+    let access_token = authHeader.slice(7)
 
-    if(!checkPresent(req.body, requiredFields, res)) {
-        return 
-    }
-
-    const { error } = await supabase.auth.admin.signOut(req.body.access_token);
+    const { error } = await supabase.auth.admin.signOut(access_token);
 
     if(error) {
         console.log(error)
     }
+    else {
+        res.status(200).send({'Success': 'User logged out'})
+    }
 })
+
 
 app.listen(PORT, () => {
     console.log(`|| SERVER RUNNING ON PORT : ${PORT} ||`)
