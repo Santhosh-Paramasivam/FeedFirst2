@@ -9,9 +9,6 @@ import crypto from 'crypto'
 import express from 'express'
 import cors from 'cors'
 import ErrorCodes from './error_codes.ts'
-import { Recoverable } from 'repl';
-import { receiveMessageOnPort } from 'worker_threads';
-
 
 configDotenv()
 
@@ -19,9 +16,11 @@ const PORT = 8080
 
 const app = express()
 
+console.log(process.env.SUPABASE_URL)
+
 const corsOptions = {
-    origin: process.env.CLIENT_URL
-}
+    origin: [process.env.CLIENT_URL_A, process.env.CLIENT_URL_B]
+};
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true}))
@@ -31,6 +30,9 @@ const connectionString = process.env.DATABASE_URL
 
 const client = postgres(connectionString!, { prepare: false })
 const db = drizzle(client);
+
+console.log(process.env.SUPABASE_URL)
+console.log(process.env.SUPABASE_KEY)
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 
